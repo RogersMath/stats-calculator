@@ -1,120 +1,559 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<title>Quick Stats Calculator</title>
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Quick Stats — Pro</title>
 <style>
+  :root {
+    /* Color system (WCAG AA) */
+    --bg: #0b1020;           /* gradient base - dark edge */
+    --bg-2: #0e152f;         /* gradient base - mid */
+    --surface: #ffffff;      /* card bg light */
+    --on-surface: #0f172a;   /* primary text */
+    --muted: #475569;        /* secondary text */
+    --border: #e2e8f0;       /* subtle borders */
+    --primary: #2563eb;      /* accessible blue */
+    --primary-contrast: #ffffff;
+    --focus: #f59e0b;        /* accessible amber */
+    --success: #059669;
+    --danger: #dc2626;
+
+    --radius: 14px;
+    --shadow: 0 10px 30px rgba(15, 23, 42, 0.12);
+    --shadow-strong: 0 18px 45px rgba(15, 23, 42, 0.18);
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --surface: #0f172a;
+      --on-surface: #e5e7eb;
+      --muted: #9aa4b2;
+      --border: #1f2937;
+    }
+  }
+
+  * { box-sizing: border-box; }
+  html, body { height: 100%; }
   body {
-    font-family: sans-serif;
-    max-width: 700px;
-    margin: 0 auto;
-    padding: 1rem;
-    line-height: 1.6;
-    background: #ffffff;
-    color: #000000;
+    margin: 0;
+    font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
+    color: var(--on-surface);
+    background: linear-gradient(160deg, var(--bg) 0%, var(--bg-2) 55%, #111827 100%);
   }
-  label {
-    font-weight: bold;
-    display: block;
-    margin-bottom: 0.5rem;
+
+  /* Header */
+  .shell { max-width: 1120px; margin: 0 auto; padding: 32px 20px 60px; }
+  header {
+    display: flex; align-items: center; justify-content: space-between; gap: 16px;
+    margin-bottom: 24px;
   }
-  textarea, button {
-    width: 100%;
-    font-size: 1rem;
-    padding: 0.75rem;
-    margin-bottom: 1rem;
+  .brand {
+    display: inline-flex; align-items: center; gap: 12px; text-decoration: none;
+    color: #fff;
   }
-  button {
-    background: #005a9e;
-    color: #ffffff;
-    border: none;
-    cursor: pointer;
+  .brand .logo {
+    width: 36px; height: 36px; border-radius: 10px;
+    background: radial-gradient(65% 65% at 35% 35%, #60a5fa 0%, #2563eb 55%, #1e40af 100%);
+    box-shadow: inset 0 0 12px rgba(255,255,255,0.25), 0 6px 16px rgba(30,64,175,0.35);
   }
-  button:focus, textarea:focus {
-    outline: 3px solid #ffbf47;
+  .brand h1 { font-size: 1.25rem; margin: 0; letter-spacing: 0.2px; }
+
+  .actions { display: flex; gap: 10px; align-items: center; }
+  .btn {
+    appearance: none; border: 1px solid transparent; padding: 10px 14px; border-radius: 10px;
+    background: var(--primary); color: var(--primary-contrast); font-weight: 600; cursor: pointer;
+    transition: transform 120ms ease, box-shadow 120ms ease, background 120ms ease;
+    box-shadow: 0 8px 20px rgba(37, 99, 235, 0.35);
   }
-  #results {
-    border-top: 2px solid #000;
-    padding-top: 1rem;
+  .btn.secondary {
+    background: transparent; color: #fff; border-color: rgba(255,255,255,0.35);
+    box-shadow: none;
+  }
+  .btn:disabled { opacity: 0.6; cursor: not-allowed; }
+  .btn:focus-visible { outline: 3px solid var(--focus); outline-offset: 2px; }
+  .btn:hover { transform: translateY(-1px); box-shadow: 0 10px 26px rgba(37, 99, 235, 0.4); }
+  .k-toggle {
+    background: transparent; color: #fff; border: 1px solid rgba(255,255,255,0.35);
+  }
+
+  /* Card layout */
+  .card {
+    background: var(--surface); border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    overflow: clip;
+  }
+  .grid {
+    display: grid; gap: 0; grid-template-columns: 1fr 1.2fr;
+  }
+  @media (max-width: 960px) {
+    .grid { grid-template-columns: 1fr; }
+  }
+
+  /* Left pane (input) */
+  .pane {
+    padding: 24px;
+    border-right: 1px solid var(--border);
+  }
+  @media (max-width: 960px) {
+    .pane { border-right: none; border-bottom: 1px solid var(--border); }
+  }
+
+  label { display: inline-block; font-weight: 700; margin-bottom: 8px; }
+  .help { color: var(--muted); margin: 6px 0 14px; font-size: 0.95rem; }
+  textarea, input[type="number"] {
+    width: 100%; padding: 12px 14px; border-radius: 10px; border: 1px solid var(--border);
+    background: transparent; color: inherit; font-size: 1rem;
+  }
+  textarea { min-height: 140px; resize: vertical; }
+  textarea:focus, input[type="number"]:focus, input[type="range"]:focus, .btn:focus {
+    outline: 3px solid var(--focus); outline-offset: 2px;
+  }
+
+  .controls { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 12px; }
+  .inline {
+    display: grid; gap: 6px; margin-top: 14px;
+  }
+  .range-wrap { display: flex; align-items: center; gap: 12px; }
+  input[type="range"] { width: 100%; }
+
+  .pill {
+    display: inline-flex; align-items: center; gap: 8px; font-size: 0.9rem;
+    padding: 6px 10px; border-radius: 999px; border: 1px solid var(--border);
+    color: var(--muted);
+  }
+
+  /* Right pane (results) */
+  .pane.right { padding: 0; background: linear-gradient(180deg, rgba(2,6,23,0.02), rgba(2,6,23,0)); }
+  .subgrid { display: grid; grid-template-rows: auto auto 1fr auto; }
+  .results {
+    padding: 24px;
+  }
+  .results h2 { margin: 0 0 12px; font-size: 1.1rem; }
+  .stats {
+    display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px;
+  }
+  @media (max-width: 640px) { .stats { grid-template-columns: 1fr; } }
+  .stat {
+    background: rgba(2,6,23,0.02);
+    border: 1px solid var(--border);
+    border-radius: 12px; padding: 12px 14px;
+  }
+  .stat .k { color: var(--muted); font-size: 0.85rem; }
+  .stat .v { font-weight: 700; font-variant-numeric: tabular-nums; }
+
+  .chart-wrap {
+    padding: 20px 24px 10px;
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+    background: rgba(2,6,23,0.015);
+  }
+  .chart-head {
+    display: flex; justify-content: space-between; align-items: center; gap: 10px; margin-bottom: 8px;
+  }
+  .chart-actions { display: flex; gap: 8px; align-items: center; }
+  .chart-actions .btn { padding: 8px 10px; font-size: 0.9rem; border-radius: 8px; }
+
+  .table-wrap { padding: 16px 24px; }
+  table { width: 100%; border-collapse: collapse; }
+  th, td {
+    padding: 8px 10px; border-bottom: 1px solid var(--border);
+    font-variant-numeric: tabular-nums;
+  }
+  th { text-align: left; color: var(--muted); font-weight: 600; }
+
+  footer {
+    color: rgba(255,255,255,0.8); font-size: 0.9rem; margin-top: 18px;
+  }
+
+  /* Motion */
+  @media (prefers-reduced-motion: no-preference) {
+    .btn { transition: transform 120ms ease, box-shadow 120ms ease; }
   }
 </style>
 </head>
 <body>
+  <div class="shell">
+    <header>
+      #
+        <span class="logo" aria-hidden="true"></span>
+        <h1>Quick Stats</h1>
+      </a>
+      <div class="actions">
+        <button class="btn secondary k-toggle" id="themeToggle" type="button" aria-pressed="false" aria-label="Toggle dark mode">🌙 Theme</button>
+        #a11y-notesAccessibility</a>
+      </div>
+    </header>
 
-<h1>Quick Statistics Calculator</h1>
+    <div class="card grid" role="region" aria-label="Quick Stats Calculator">
+      <!-- Left: Input -->
+      <section class="pane" aria-labelledby="inputTitle">
+        <h2 id="inputTitle" style="margin-top:0">Your Data</h2>
+        <p class="help" id="inputHelp">Paste or type numbers separated by commas, spaces, or new lines. Scientific notation is OK (e.g., 3.2e-3).</p>
+        <label for="numbers">Numbers</label>
+        <textarea id="numbers" rows="7" aria-describedby="inputHelp exampleNote"></textarea>
+        <p id="exampleNote" class="help">Example: <code>12, 15, 15, 18, 19, 21, 22</code></p>
 
-<p>Enter numbers separated by commas, spaces, or line breaks.</p>
+        <div class="inline">
+          <div class="range-wrap" aria-live="polite">
+            <label for="bins" class="pill" id="binLabel">Bins: <span id="binCountLabel">Auto</span></label>
+            <input id="bins" type="range" min="5" max="30" value="0" aria-labelledby="binLabel" />
+            <input id="binsNumber" type="number" min="5" max="30" value="" inputmode="numeric" aria-label="Bins number (leave blank for Auto)" placeholder="Auto" />
+          </div>
+          <div class="controls" role="group" aria-label="Actions">
+            <button id="calcBtn" class="btn" type="button">Calculate</button>
+            <button id="resetBtn" class="btn secondary" type="button">Reset</button>
+            <button id="copyBtn" class="btn secondary" type="button" disabled>Copy Results</button>
+          </div>
+          <p class="help" id="status" role="status" aria-live="polite"></p>
+        </div>
+      </section>
 
-<label for="numbers">Numbers Input:</label>
-<textarea id="numbers" rows="6" aria-describedby="inputHelp"></textarea>
-<p id="inputHelp">Example: 4, 5, 6, 7 or one value per line.</p>
+      <!-- Right: Results & Chart -->
+      <section class="pane right subgrid" aria-labelledby="resultsTitle">
+        <div class="results">
+          <h2 id="resultsTitle" style="margin:0 0 6px">Results</h2>
+          <div class="stats" id="statsGrid" aria-live="polite"></div>
+        </div>
 
-<button id="calcBtn">Calculate Statistics</button>
+        <div class="chart-wrap">
+          <div class="chart-head">
+            <div class="pill" aria-live="polite">Histogram <span id="histMeta" aria-hidden="true"></span></div>
+            <div class="chart-actions" role="group" aria-label="Chart actions">
+              <button id="downloadBtn" class="btn secondary" type="button" disabled>Download PNG</button>
+            </div>
+          </div>
+          <canvas id="histogram" role="img" aria-label="Histogram of entered values. A table summary is available below.">
+            Your browser does not support canvas. Please use the data table below for an equivalent summary.
+          </canvas>
+        </div>
 
-<div id="results" aria-live="polite"></div>
+        <div class="table-wrap">
+          <h3 style="margin:0 0 8px">Data Summary (Non‑visual)</h3>
+          <table aria-describedby="tableDesc">
+            <caption id="tableDesc" class="help" style="text-align:left;caption-side:bottom;">
+              This table summarizes the computed statistics. It provides a text alternative to the chart for accessibility.
+            </caption>
+            <tbody id="summaryTable"></tbody>
+          </table>
+        </div>
+      </section>
+    </div>
 
-<script>
-function calculateStats() {
-  const input = document.getElementById("numbers").value;
-  const resultsDiv = document.getElementById("results");
+    <footer id="a11y-notes" aria-live="off">
+      <p><strong>Accessibility notes:</strong> Labels tie to inputs; keyboard focus is visible; results are announced via <code>aria-live</code>; color is not the only means of conveying information; contrast meets or exceeds WCAG 2.1 AA. A non‑visual table provides an equivalent for the chart.</p>
+    </footer>
+  </div>
 
-  if (!input.trim()) {
-    resultsDiv.innerHTML = "<p>Please enter at least one number.</p>";
-    return;
-  }
+  <!-- Chart.js (lightweight, no framework) -->
+  https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js</script>
 
-  // Parse numbers
-  const nums = input
-    .split(/[\s,]+/)
-    .map(n => parseFloat(n))
-    .filter(n => !isNaN(n));
+  <script>
+    // --- Utility functions ---
+    const toNums = (raw) => raw
+      .split(/[\s,;\n\r\t]+/)
+      .map(s => s.trim())
+      .filter(Boolean)
+      .map(s => Number(s))
+      .filter(n => Number.isFinite(n));
 
-  if (nums.length === 0) {
-    resultsDiv.innerHTML = "<p>No valid numbers found.</p>";
-    return;
-  }
+    const sum = arr => arr.reduce((a,b) => a + b, 0);
+    const mean = arr => sum(arr) / arr.length;
+    const median = arr => {
+      const n = arr.length; if (n === 0) return NaN;
+      const s = [...arr].sort((a,b)=>a-b);
+      return n % 2 ? s[(n-1)/2] : (s[n/2 - 1] + s[n/2]) / 2;
+    };
+    const quantile = (arr, q) => {
+      const s = [...arr].sort((a,b)=>a-b);
+      if (s.length === 0) return NaN;
+      const pos = (s.length - 1) * q;
+      const base = Math.floor(pos), rest = pos - base;
+      return s[base] + (s[base + 1] !== undefined ? rest * (s[base + 1] - s[base]) : 0);
+    };
+    const variancePop = arr => {
+      const m = mean(arr);
+      return arr.reduce((acc, v) => acc + (v - m) ** 2, 0) / arr.length;
+    };
+    const stdPop = arr => Math.sqrt(variancePop(arr));
+    const modes = arr => {
+      const m = new Map();
+      for (const v of arr) m.set(v, (m.get(v) || 0) + 1);
+      const max = Math.max(...m.values());
+      const vals = [...m.entries()].filter(([,c]) => c === max).map(([v]) => v);
+      return { modes: vals, freq: max };
+    };
 
-  nums.sort((a, b) => a - b);
+    const clamp = (n, lo, hi) => Math.max(lo, Math.min(hi, n));
 
-  const count = nums.length;
-  const sum = nums.reduce((a, b) => a + b, 0);
-  const mean = sum / count;
+    // Freedman–Diaconis recommended bins
+    const autoBins = (arr) => {
+      if (arr.length < 2) return 1;
+      const q1 = quantile(arr, 0.25), q3 = quantile(arr, 0.75);
+      const iqr = Math.max(1e-12, q3 - q1);
+      const bw = 2 * iqr / Math.cbrt(arr.length);
+      const range = Math.max(1e-12, Math.max(...arr) - Math.min(...arr));
+      const bins = Math.ceil(range / bw);
+      return clamp(bins, 5, 30);
+    };
 
-  let median;
-  if (count % 2 === 0) {
-    median = (nums[count/2 - 1] + nums[count/2]) / 2;
-  } else {
-    median = nums[(count - 1)/2];
-  }
+    // Histogram computation
+    function makeHistogram(arr, bins) {
+      const lo = Math.min(...arr), hi = Math.max(...arr);
+      const range = hi - lo || 1; // prevent zero-width
+      const step = range / bins;
+      const edges = Array.from({ length: bins + 1 }, (_, i) => lo + i * step);
+      const counts = new Array(bins).fill(0);
+      for (const v of arr) {
+        let idx = Math.floor((v - lo) / step);
+        if (idx === bins) idx = bins - 1; // include max in last bin
+        counts[idx]++;
+      }
+      const labels = counts.map((_, i) => {
+        const a = edges[i], b = edges[i + 1];
+        // Compact label like [a, b)
+        return `${formatNum(a)} – ${formatNum(b)}`;
+      });
+      return { labels, counts, lo, hi, step };
+    }
 
-  // Mode
-  const freq = {};
-  nums.forEach(n => freq[n] = (freq[n] || 0) + 1);
-  const maxFreq = Math.max(...Object.values(freq));
-  const modes = Object.keys(freq).filter(k => freq[k] === maxFreq);
+    const formatNum = (n) => {
+      if (!Number.isFinite(n)) return '';
+      const abs = Math.abs(n);
+      if (abs !== 0 && (abs < 0.0001 || abs >= 1e6)) return n.toExponential(2);
+      return Math.round(n * 10000) / 10000; // 4 dp
+    };
 
-  // Variance & Standard Deviation
-  const variance = nums.reduce((acc, n) => acc + Math.pow(n - mean, 2), 0) / count;
-  const stdDev = Math.sqrt(variance);
+    // DOM refs
+    const textarea = document.getElementById('numbers');
+    const calcBtn = document.getElementById('calcBtn');
+    const resetBtn = document.getElementById('resetBtn');
+    const copyBtn = document.getElementById('copyBtn');
+    const statusEl = document.getElementById('status');
+    const statsGrid = document.getElementById('statsGrid');
+    const tableBody = document.getElementById('summaryTable');
+    const canvas = document.getElementById('histogram');
+    const downloadBtn = document.getElementById('downloadBtn');
+    const binsRange = document.getElementById('bins');
+    const binsNumber = document.getElementById('binsNumber');
+    const binLabel = document.getElementById('binCountLabel');
+    const histMeta = document.getElementById('histMeta');
 
-  resultsDiv.innerHTML = `
-    <h2>Results</h2>
-    <p><strong>Count:</strong> ${count}</p>
-    <p><strong>Mean:</strong> ${mean.toFixed(4)}</p>
-    <p><strong>Median:</strong> ${median}</p>
-    <p><strong>Mode(s):</strong> ${modes.join(", ")}</p>
-    <p><strong>Minimum:</strong> ${nums[0]}</p>
-    <p><strong>Maximum:</strong> ${nums[nums.length - 1]}</p>
-    <p><strong>Range:</strong> ${nums[nums.length - 1] - nums[0]}</p>
-    <p><strong>Sum:</strong> ${sum}</p>
-    <p><strong>Variance:</strong> ${variance.toFixed(4)}</p>
-    <p><strong>Standard Deviation:</strong> ${stdDev.toFixed(4)}</p>
-  `;
-}
+    let chart = null;
+    let lastData = [];
 
-document.getElementById("calcBtn").addEventListener("click", calculateStats);
-</script>
+    function setStatus(msg) { statusEl.textContent = msg; }
 
+    function updateBinsLabel(value, auto) {
+      binLabel.textContent = auto ? 'Auto' : String(value);
+    }
+
+    function calculate(auto = true) {
+      const nums = toNums(textarea.value);
+      lastData = nums;
+      if (nums.length === 0) {
+        setStatus('Please enter at least one valid number.');
+        statsGrid.innerHTML = '';
+        tableBody.innerHTML = '';
+        destroyChart();
+        downloadBtn.disabled = true;
+        copyBtn.disabled = true;
+        return;
+      }
+
+      nums.sort((a,b)=>a-b);
+      const n = nums.length;
+      const sm = sum(nums);
+      const mn = mean(nums);
+      const md = median(nums);
+      const { modes: modeVals, freq } = modes(nums);
+      const minV = nums[0], maxV = nums[nums.length - 1];
+      const rangeV = maxV - minV;
+      const vpop = variancePop(nums);
+      const sd = Math.sqrt(vpop);
+      const q1 = quantile(nums, 0.25), q3 = quantile(nums, 0.75);
+      const iqr = q3 - q1;
+
+      // Bins
+      let bins = binsNumber.value ? Number(binsNumber.value) : 0;
+      if (!bins || !Number.isFinite(bins)) bins = autoBins(nums);
+      bins = clamp(Math.round(bins), 5, 30);
+      updateBinsLabel(bins, !binsNumber.value);
+
+      // Histogram
+      const hist = makeHistogram(nums, bins);
+      renderChart(hist.labels, hist.counts);
+      histMeta.textContent = ` • ${bins} bin${bins===1?'':'s'}`;
+
+      // Stats tiles
+      statsGrid.innerHTML = [
+        { k:'Count', v:n },
+        { k:'Mean', v:formatNum(mn) },
+        { k:'Median', v:formatNum(md) },
+        { k:'Mode(s)', v: modeVals.join(', ') },
+        { k:'Min', v:formatNum(minV) },
+        { k:'Max', v:formatNum(maxV) },
+        { k:'Range', v:formatNum(rangeV) },
+        { k:'Sum', v:formatNum(sm) },
+        { k:'Variance (pop.)', v:formatNum(vpop) },
+        { k:'Std Dev (pop.)', v:formatNum(sd) },
+        { k:'Q1', v:formatNum(q1) },
+        { k:'Q3', v:formatNum(q3) },
+      ].map(o => `<div class="stat"><div class="k">${o.k}</div><div class="v">${o.v}</div></div>`).join('');
+
+      // Non-visual summary table (accessible alternative)
+      tableBody.innerHTML = `
+        <tr><th scope="row">Count</th><td>${n}</td></tr>
+        <tr><th scope="row">Mean</th><td>${formatNum(mn)}</td></tr>
+        <tr><th scope="row">Median</th><td>${formatNum(md)}</td></tr>
+        <tr><th scope="row">Mode(s)</th><td>${modeVals.join(', ')} (frequency ${freq})</td></tr>
+        <tr><th scope="row">Minimum</th><td>${formatNum(minV)}</td></tr>
+        <tr><th scope="row">Maximum</th><td>${formatNum(maxV)}</td></tr>
+        <tr><th scope="row">Range</th><td>${formatNum(rangeV)}</td></tr>
+        <tr><th scope="row">Sum</th><td>${formatNum(sm)}</td></tr>
+        <tr><th scope="row">Variance (population)</th><td>${formatNum(vpop)}</td></tr>
+        <tr><th scope="row">Standard Deviation (population)</th><td>${formatNum(sd)}</td></tr>
+        <tr><th scope="row">Q1</th><td>${formatNum(q1)}</td></tr>
+        <tr><th scope="row">Q3</th><td>${formatNum(q3)}</td></tr>
+        <tr><th scope="row">IQR</th><td>${formatNum(iqr)}</td></tr>
+      `;
+
+      setStatus(`Calculated statistics for ${n} value${n===1?'':'s'}.`);
+      downloadBtn.disabled = false;
+      copyBtn.disabled = false;
+    }
+
+    function destroyChart() {
+      if (chart) { chart.destroy(); chart = null; }
+      const ctx = canvas.getContext('2d');
+      ctx && ctx.clearRect(0, 0, canvas.width, canvas.height);
+    }
+
+    function renderChart(labels, counts) {
+      destroyChart();
+      const ctx = canvas.getContext('2d');
+      chart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+          labels,
+          datasets: [{
+            label: 'Frequency',
+            data: counts,
+            backgroundColor: 'rgba(37, 99, 235, 0.6)',
+            borderColor: 'rgba(37, 99, 235, 1)',
+            borderWidth: 1.5,
+            borderRadius: 6,
+            hoverBackgroundColor: 'rgba(37, 99, 235, 0.75)',
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: { labels: { color: getComputedStyle(document.documentElement).getPropertyValue('--on-surface') } },
+            tooltip: {
+              callbacks: {
+                label: (ctx) => ` ${ctx.dataset.label}: ${ctx.raw}`
+              }
+            }
+          },
+          scales: {
+            x: {
+              ticks: { color: getComputedStyle(document.documentElement).getPropertyValue('--on-surface') },
+              grid: { color: 'rgba(148, 163, 184, 0.25)' }
+            },
+            y: {
+              beginAtZero: true,
+              ticks: { precision: 0, color: getComputedStyle(document.documentElement).getPropertyValue('--on-surface') },
+              grid: { color: 'rgba(148, 163, 184, 0.25)' }
+            }
+          }
+        }
+      });
+
+      // Set a fixed height that adapts to viewport
+      canvas.parentElement.style.height = '320px';
+    }
+
+    // Events
+    calcBtn.addEventListener('click', () => calculate());
+    resetBtn.addEventListener('click', () => {
+      textarea.value = '';
+      binsRange.value = 0;
+      binsNumber.value = '';
+      updateBinsLabel(0, true);
+      statsGrid.innerHTML = '';
+      tableBody.innerHTML = '';
+      setStatus('Cleared.');
+      destroyChart();
+      downloadBtn.disabled = true;
+      copyBtn.disabled = true;
+      textarea.focus();
+    });
+
+    // Sync range <-> number
+    binsRange.addEventListener('input', (e) => {
+      const val = Number(e.target.value);
+      binsNumber.value = val ? val : '';
+      updateBinsLabel(val, !val);
+      if (lastData.length) calculate(false);
+    });
+    binsNumber.addEventListener('input', (e) => {
+      const v = e.target.value;
+      if (v === '') {
+        binsRange.value = 0;
+        updateBinsLabel(0, true);
+      } else {
+        const val = clamp(Number(v), 5, 30);
+        if (!Number.isFinite(val)) return;
+        binsNumber.value = val;
+        binsRange.value = val;
+        updateBinsLabel(val, false);
+      }
+      if (lastData.length) calculate(false);
+    });
+
+    // Copy results
+    copyBtn.addEventListener('click', async () => {
+      const txt = tableBody.innerText.replace(/\n{2,}/g, '\n');
+      try {
+        await navigator.clipboard.writeText(txt);
+        setStatus('Results copied to clipboard.');
+      } catch {
+        setStatus('Copy failed. You can select the table and copy manually.');
+      }
+    });
+
+    // Download chart
+    downloadBtn.addEventListener('click', () => {
+      if (!chart) return;
+      const link = document.createElement('a');
+      link.download = 'histogram.png';
+      link.href = chart.toBase64Image('image/png', 1);
+      link.click();
+    });
+
+    // Theme toggle (respects prefers-color-scheme)
+    const themeToggle = document.getElementById('themeToggle');
+    themeToggle.addEventListener('click', () => {
+      const dark = document.documentElement.dataset.theme === 'dark';
+      document.documentElement.dataset.theme = dark ? 'light' : 'dark';
+      themeToggle.setAttribute('aria-pressed', String(!dark));
+      // Update chart tick/label colors
+      if (chart) calculate(false);
+    });
+
+    // Keyboard niceties
+    textarea.addEventListener('keydown', (e) => {
+      if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'enter') {
+        e.preventDefault(); calculate();
+      }
+    });
+
+    // Example preload for quick demo (optional—comment out for clean start)
+    // textarea.value = "12, 15, 15, 18, 19, 21, 22, 24, 26, 29, 30, 30, 31, 33, 37";
+    // calculate();
+
+  </script>
 </body>
 </html>
