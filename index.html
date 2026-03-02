@@ -1,175 +1,80 @@
 <!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Quick Stats — Pro</title>
-<style>
-  :root {
-    /* Color system (WCAG AA) */
-    --bg: #0b1020;           /* gradient base - dark edge */
-    --bg-2: #0e152f;         /* gradient base - mid */
-    --surface: #ffffff;      /* card bg light */
-    --on-surface: #0f172a;   /* primary text */
-    --muted: #475569;        /* secondary text */
-    --border: #e2e8f0;       /* subtle borders */
-    --primary: #2563eb;      /* accessible blue */
-    --primary-contrast: #ffffff;
-    --focus: #f59e0b;        /* accessible amber */
-    --success: #059669;
-    --danger: #dc2626;
-
+<html :root {<html lang="en">
+    --bg: #0b1020; --bg-2: #0e152f;
+    --surface: #ffffff; --on-surface: #0f172a;
+    --muted: #475569; --border: #e2e8f0;
+    --primary: #2563eb; --primary-contrast: #ffffff;
+    --focus: #f59e0b;
     --radius: 14px;
     --shadow: 0 10px 30px rgba(15, 23, 42, 0.12);
-    --shadow-strong: 0 18px 45px rgba(15, 23, 42, 0.18);
   }
-
   @media (prefers-color-scheme: dark) {
-    :root {
-      --surface: #0f172a;
-      --on-surface: #e5e7eb;
-      --muted: #9aa4b2;
-      --border: #1f2937;
-    }
+    :root { --surface:#0f172a; --on-surface:#e5e7eb; --muted:#9aa4b2; --border:#1f2937; }
   }
-
   * { box-sizing: border-box; }
   html, body { height: 100%; }
   body {
     margin: 0;
-    font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
+    font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
     color: var(--on-surface);
     background: linear-gradient(160deg, var(--bg) 0%, var(--bg-2) 55%, #111827 100%);
   }
+  .shell { max-width: 1120px; margin: 0 auto; padding: 20px 16px 60px; }
+  header { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 16px; }
+  .brand { display: inline-flex; align-items: center; gap: 10px; color: #fff; text-decoration: none; }
+  .brand .logo { width: 32px; height: 32px; border-radius: 10px; background: radial-gradient(65% 65% at 35% 35%, #60a5fa 0%, #2563eb 55%, #1e40af 100%); box-shadow: inset 0 0 10px rgba(255,255,255,.25), 0 6px 16px rgba(30,64,175,.35); }
+  .brand h1 { margin: 0; font-size: 1.15rem; letter-spacing: .2px; }
 
-  /* Header */
-  .shell { max-width: 1120px; margin: 0 auto; padding: 32px 20px 60px; }
-  header {
-    display: flex; align-items: center; justify-content: space-between; gap: 16px;
-    margin-bottom: 24px;
-  }
-  .brand {
-    display: inline-flex; align-items: center; gap: 12px; text-decoration: none;
-    color: #fff;
-  }
-  .brand .logo {
-    width: 36px; height: 36px; border-radius: 10px;
-    background: radial-gradient(65% 65% at 35% 35%, #60a5fa 0%, #2563eb 55%, #1e40af 100%);
-    box-shadow: inset 0 0 12px rgba(255,255,255,0.25), 0 6px 16px rgba(30,64,175,0.35);
-  }
-  .brand h1 { font-size: 1.25rem; margin: 0; letter-spacing: 0.2px; }
-
-  .actions { display: flex; gap: 10px; align-items: center; }
   .btn {
     appearance: none; border: 1px solid transparent; padding: 10px 14px; border-radius: 10px;
     background: var(--primary); color: var(--primary-contrast); font-weight: 600; cursor: pointer;
-    transition: transform 120ms ease, box-shadow 120ms ease, background 120ms ease;
-    box-shadow: 0 8px 20px rgba(37, 99, 235, 0.35);
+    box-shadow: 0 8px 20px rgba(37,99,235,.35);
   }
-  .btn.secondary {
-    background: transparent; color: #fff; border-color: rgba(255,255,255,0.35);
-    box-shadow: none;
-  }
-  .btn:disabled { opacity: 0.6; cursor: not-allowed; }
+  .btn.secondary { background: transparent; color: #fff; border-color: rgba(255,255,255,.35); box-shadow: none; }
   .btn:focus-visible { outline: 3px solid var(--focus); outline-offset: 2px; }
-  .btn:hover { transform: translateY(-1px); box-shadow: 0 10px 26px rgba(37, 99, 235, 0.4); }
-  .k-toggle {
-    background: transparent; color: #fff; border: 1px solid rgba(255,255,255,0.35);
-  }
+  .btn:disabled { opacity: .6; cursor: not-allowed; }
+  .actions { display: flex; gap: 8px; }
 
-  /* Card layout */
-  .card {
-    background: var(--surface); border-radius: var(--radius);
-    box-shadow: var(--shadow);
-    overflow: clip;
-  }
-  .grid {
-    display: grid; gap: 0; grid-template-columns: 1fr 1.2fr;
-  }
-  @media (max-width: 960px) {
-    .grid { grid-template-columns: 1fr; }
-  }
+  .card { background: var(--surface); border-radius: var(--radius); box-shadow: var(--shadow); overflow: clip; }
+  .grid { display: grid; grid-template-columns: 1fr 1.2fr; }
+  /* MOBILE-FIRST: stack at <= 900px */
+  @media (max-width: 900px) { .grid { grid-template-columns: 1fr; } }
 
-  /* Left pane (input) */
-  .pane {
-    padding: 24px;
-    border-right: 1px solid var(--border);
-  }
-  @media (max-width: 960px) {
-    .pane { border-right: none; border-bottom: 1px solid var(--border); }
-  }
+  .pane { padding: 18px; border-right: 1px solid var(--border); }
+  @media (max-width: 900px) { .pane { border-right: none; border-bottom: 1px solid var(--border); } }
+  .pane.right { padding: 0; background: rgba(2,6,23,.02); }
 
   label { display: inline-block; font-weight: 700; margin-bottom: 8px; }
-  .help { color: var(--muted); margin: 6px 0 14px; font-size: 0.95rem; }
+  .help { color: var(--muted); margin: 6px 0 14px; font-size: .95rem; }
   textarea, input[type="number"] {
     width: 100%; padding: 12px 14px; border-radius: 10px; border: 1px solid var(--border);
     background: transparent; color: inherit; font-size: 1rem;
   }
   textarea { min-height: 140px; resize: vertical; }
-  textarea:focus, input[type="number"]:focus, input[type="range"]:focus, .btn:focus {
-    outline: 3px solid var(--focus); outline-offset: 2px;
-  }
-
+  textarea:focus, input[type="number"]:focus, input[type="range"]:focus, .btn:focus { outline: 3px solid var(--focus); outline-offset: 2px; }
   .controls { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 12px; }
-  .inline {
-    display: grid; gap: 6px; margin-top: 14px;
-  }
-  .range-wrap { display: flex; align-items: center; gap: 12px; }
-  input[type="range"] { width: 100%; }
+  .pill { display: inline-flex; align-items: center; gap: 8px; font-size: .9rem; padding: 6px 10px; border-radius: 999px; border: 1px solid var(--border); color: var(--muted); }
 
-  .pill {
-    display: inline-flex; align-items: center; gap: 8px; font-size: 0.9rem;
-    padding: 6px 10px; border-radius: 999px; border: 1px solid var(--border);
-    color: var(--muted);
-  }
-
-  /* Right pane (results) */
-  .pane.right { padding: 0; background: linear-gradient(180deg, rgba(2,6,23,0.02), rgba(2,6,23,0)); }
-  .subgrid { display: grid; grid-template-rows: auto auto 1fr auto; }
-  .results {
-    padding: 24px;
-  }
-  .results h2 { margin: 0 0 12px; font-size: 1.1rem; }
-  .stats {
-    display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px;
-  }
-  @media (max-width: 640px) { .stats { grid-template-columns: 1fr; } }
-  .stat {
-    background: rgba(2,6,23,0.02);
-    border: 1px solid var(--border);
-    border-radius: 12px; padding: 12px 14px;
-  }
-  .stat .k { color: var(--muted); font-size: 0.85rem; }
+  .results { padding: 18px; }
+  .stats { display: grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: 10px; }
+  @media (max-width: 600px) { .stats { grid-template-columns: 1fr; } }
+  .stat { background: rgba(2,6,23,.02); border: 1px solid var(--border); border-radius: 12px; padding: 12px 14px; }
+  .stat .k { color: var(--muted); font-size: .9rem; }
   .stat .v { font-weight: 700; font-variant-numeric: tabular-nums; }
 
-  .chart-wrap {
-    padding: 20px 24px 10px;
-    border-top: 1px solid var(--border);
-    border-bottom: 1px solid var(--border);
-    background: rgba(2,6,23,0.015);
-  }
-  .chart-head {
-    display: flex; justify-content: space-between; align-items: center; gap: 10px; margin-bottom: 8px;
-  }
+  .chart-wrap { padding: 14px 18px; border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); background: rgba(2,6,23,.015); }
+  .chart-head { display: flex; justify-content: space-between; align-items: center; gap: 10px; margin-bottom: 8px; }
   .chart-actions { display: flex; gap: 8px; align-items: center; }
-  .chart-actions .btn { padding: 8px 10px; font-size: 0.9rem; border-radius: 8px; }
+  /* Responsive chart height */
+  .chart-area { position: relative; height: 360px; }
+  @media (max-width: 600px) { .chart-area { height: 420px; } }
 
-  .table-wrap { padding: 16px 24px; }
+  .table-wrap { padding: 12px 18px 18px; overflow-x: auto; }
   table { width: 100%; border-collapse: collapse; }
-  th, td {
-    padding: 8px 10px; border-bottom: 1px solid var(--border);
-    font-variant-numeric: tabular-nums;
-  }
+  th, td { padding: 8px 10px; border-bottom: 1px solid var(--border); font-variant-numeric: tabular-nums; }
   th { text-align: left; color: var(--muted); font-weight: 600; }
 
-  footer {
-    color: rgba(255,255,255,0.8); font-size: 0.9rem; margin-top: 18px;
-  }
-
-  /* Motion */
-  @media (prefers-reduced-motion: no-preference) {
-    .btn { transition: transform 120ms ease, box-shadow 120ms ease; }
-  }
+  footer { color: rgba(255,255,255,.85); font-size: .9rem; margin-top: 16px; }
 </style>
 </head>
 <body>
@@ -180,7 +85,7 @@
         <h1>Quick Stats</h1>
       </a>
       <div class="actions">
-        <button class="btn secondary k-toggle" id="themeToggle" type="button" aria-pressed="false" aria-label="Toggle dark mode">🌙 Theme</button>
+        <button class="btn secondary" id="themeToggle" type="button" aria-pressed="false" aria-label="Toggle theme">🌙 Theme</button>
         #a11y-notesAccessibility</a>
       </div>
     </header>
@@ -194,23 +99,19 @@
         <textarea id="numbers" rows="7" aria-describedby="inputHelp exampleNote"></textarea>
         <p id="exampleNote" class="help">Example: <code>12, 15, 15, 18, 19, 21, 22</code></p>
 
-        <div class="inline">
-          <div class="range-wrap" aria-live="polite">
-            <label for="bins" class="pill" id="binLabel">Bins: <span id="binCountLabel">Auto</span></label>
-            <input id="bins" type="range" min="5" max="30" value="0" aria-labelledby="binLabel" />
-            <input id="binsNumber" type="number" min="5" max="30" value="" inputmode="numeric" aria-label="Bins number (leave blank for Auto)" placeholder="Auto" />
-          </div>
-          <div class="controls" role="group" aria-label="Actions">
-            <button id="calcBtn" class="btn" type="button">Calculate</button>
-            <button id="resetBtn" class="btn secondary" type="button">Reset</button>
-            <button id="copyBtn" class="btn secondary" type="button" disabled>Copy Results</button>
-          </div>
-          <p class="help" id="status" role="status" aria-live="polite"></p>
+        <div class="controls" role="group" aria-label="Actions">
+          <label class="pill" for="binsNumber">Bins
+            <input id="binsNumber" type="number" min="5" max="30" placeholder="Auto" inputmode="numeric" style="width:90px;margin-left:8px;">
+          </label>
+          <button id="calcBtn" class="btn" type="button">Calculate</button>
+          <button id="resetBtn" class="btn secondary" type="button">Reset</button>
+          <button id="copyBtn" class="btn secondary" type="button" disabled>Copy Results</button>
         </div>
+        <p class="help" id="status" role="status" aria-live="polite"></p>
       </section>
 
-      <!-- Right: Results & Chart -->
-      <section class="pane right subgrid" aria-labelledby="resultsTitle">
+      <!-- Right: Results + Chart -->
+      <section class="pane right" aria-labelledby="resultsTitle">
         <div class="results">
           <h2 id="resultsTitle" style="margin:0 0 6px">Results</h2>
           <div class="stats" id="statsGrid" aria-live="polite"></div>
@@ -223,9 +124,13 @@
               <button id="downloadBtn" class="btn secondary" type="button" disabled>Download PNG</button>
             </div>
           </div>
-          <canvas id="histogram" role="img" aria-label="Histogram of entered values. A table summary is available below.">
-            Your browser does not support canvas. Please use the data table below for an equivalent summary.
-          </canvas>
+
+          <div class="chart-area">
+            <!-- Canvas for Chart.js; hidden when we use SVG fallback -->
+            <canvas id="histCanvas" role="img" aria-label="Histogram of entered values. A table summary is available below."></canvas>
+            <!-- Container for SVG fallback -->
+            <div id="svgFallback" hidden aria-hidden="true"></div>
+          </div>
         </div>
 
         <div class="table-wrap">
@@ -245,86 +150,29 @@
     </footer>
   </div>
 
-  <!-- Chart.js (lightweight, no framework) -->
+  <!-- Try to load Chart.js (progressive enhancement). If this fails, SVG fallback will render. -->
   https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js</script>
 
-  <script>
-    // --- Utility functions ---
-    const toNums = (raw) => raw
-      .split(/[\s,;\n\r\t]+/)
-      .map(s => s.trim())
-      .filter(Boolean)
-      .map(s => Number(s))
-      .filter(n => Number.isFinite(n));
-
-    const sum = arr => arr.reduce((a,b) => a + b, 0);
-    const mean = arr => sum(arr) / arr.length;
-    const median = arr => {
-      const n = arr.length; if (n === 0) return NaN;
-      const s = [...arr].sort((a,b)=>a-b);
-      return n % 2 ? s[(n-1)/2] : (s[n/2 - 1] + s[n/2]) / 2;
-    };
-    const quantile = (arr, q) => {
-      const s = [...arr].sort((a,b)=>a-b);
-      if (s.length === 0) return NaN;
-      const pos = (s.length - 1) * q;
-      const base = Math.floor(pos), rest = pos - base;
-      return s[base] + (s[base + 1] !== undefined ? rest * (s[base + 1] - s[base]) : 0);
-    };
-    const variancePop = arr => {
-      const m = mean(arr);
-      return arr.reduce((acc, v) => acc + (v - m) ** 2, 0) / arr.length;
-    };
-    const stdPop = arr => Math.sqrt(variancePop(arr));
-    const modes = arr => {
-      const m = new Map();
-      for (const v of arr) m.set(v, (m.get(v) || 0) + 1);
-      const max = Math.max(...m.values());
-      const vals = [...m.entries()].filter(([,c]) => c === max).map(([v]) => v);
-      return { modes: vals, freq: max };
-    };
-
-    const clamp = (n, lo, hi) => Math.max(lo, Math.min(hi, n));
-
-    // Freedman–Diaconis recommended bins
-    const autoBins = (arr) => {
-      if (arr.length < 2) return 1;
-      const q1 = quantile(arr, 0.25), q3 = quantile(arr, 0.75);
-      const iqr = Math.max(1e-12, q3 - q1);
-      const bw = 2 * iqr / Math.cbrt(arr.length);
-      const range = Math.max(1e-12, Math.max(...arr) - Math.min(...arr));
-      const bins = Math.ceil(range / bw);
-      return clamp(bins, 5, 30);
-    };
-
-    // Histogram computation
+  <script defer>
+    // ---------- Utilities ----------
+    const toNums = (raw) => raw.split(/[\s,;\n\r\t]+/).map(s=>s.trim()).filter(Boolean).map(Number).filter(Number.isFinite);
+    const sum = arr => arr.reduce((a,b)=>a+b,0);
+    const mean = arr => sum(arr)/arr.length;
+    const median = arr => { const n=arr.length; if(!n) return NaN; const s=[...arr].sort((a,b)=>a-b); return n%2?s[(n-1)/2]:(s[n/2-1]+s[n/2])/2; };
+    const quantile = (arr,q)=>{ const s=[...arr].sort((a,b)=>a-b); if(!s.length) return NaN; const pos=(s.length-1)*q; const base=Math.floor(pos), rest=pos-base; return s[base]+(s[base+1]!==undefined?rest*(s[base+1]-s[base]):0); };
+    const variancePop = arr => { const m=mean(arr); return arr.reduce((acc,v)=>acc+(v-m)**2,0)/arr.length; };
+    const clamp = (n,lo,hi)=>Math.max(lo,Math.min(hi,n));
+    const formatNum = (n) => { if(!Number.isFinite(n)) return ''; const abs=Math.abs(n); if(abs!==0 && (abs<1e-4 || abs>=1e6)) return n.toExponential(2); return Math.round(n*10000)/10000; };
+    const autoBins = (arr)=>{ if(arr.length<2) return 1; const q1=quantile(arr,0.25), q3=quantile(arr,0.75); const iqr=Math.max(1e-12,q3-q1); const bw=2*iqr/Math.cbrt(arr.length); const range=Math.max(1e-12, Math.max(...arr)-Math.min(...arr)); const bins=Math.ceil(range/bw); return clamp(bins,5,30); };
     function makeHistogram(arr, bins) {
-      const lo = Math.min(...arr), hi = Math.max(...arr);
-      const range = hi - lo || 1; // prevent zero-width
-      const step = range / bins;
-      const edges = Array.from({ length: bins + 1 }, (_, i) => lo + i * step);
-      const counts = new Array(bins).fill(0);
-      for (const v of arr) {
-        let idx = Math.floor((v - lo) / step);
-        if (idx === bins) idx = bins - 1; // include max in last bin
-        counts[idx]++;
-      }
-      const labels = counts.map((_, i) => {
-        const a = edges[i], b = edges[i + 1];
-        // Compact label like [a, b)
-        return `${formatNum(a)} – ${formatNum(b)}`;
-      });
-      return { labels, counts, lo, hi, step };
+      const lo=Math.min(...arr), hi=Math.max(...arr); const range=hi-lo||1; const step=range/bins;
+      const edges=Array.from({length:bins+1},(_,i)=>lo+i*step); const counts=new Array(bins).fill(0);
+      for(const v of arr){ let idx=Math.floor((v-lo)/step); if(idx===bins) idx=bins-1; counts[idx]++; }
+      const labels=counts.map((_,i)=>`${formatNum(edges[i])} – ${formatNum(edges[i+1])}`);
+      return { labels, counts, lo, hi, step, edges };
     }
 
-    const formatNum = (n) => {
-      if (!Number.isFinite(n)) return '';
-      const abs = Math.abs(n);
-      if (abs !== 0 && (abs < 0.0001 || abs >= 1e6)) return n.toExponential(2);
-      return Math.round(n * 10000) / 10000; // 4 dp
-    };
-
-    // DOM refs
+    // ---------- DOM ----------
     const textarea = document.getElementById('numbers');
     const calcBtn = document.getElementById('calcBtn');
     const resetBtn = document.getElementById('resetBtn');
@@ -332,81 +180,60 @@
     const statusEl = document.getElementById('status');
     const statsGrid = document.getElementById('statsGrid');
     const tableBody = document.getElementById('summaryTable');
-    const canvas = document.getElementById('histogram');
-    const downloadBtn = document.getElementById('downloadBtn');
-    const binsRange = document.getElementById('bins');
-    const binsNumber = document.getElementById('binsNumber');
-    const binLabel = document.getElementById('binCountLabel');
     const histMeta = document.getElementById('histMeta');
+    const canvas = document.getElementById('histCanvas');
+    const svgFallback = document.getElementById('svgFallback');
+    const downloadBtn = document.getElementById('downloadBtn');
+    const binsNumber = document.getElementById('binsNumber');
+    const themeToggle = document.getElementById('themeToggle');
 
-    let chart = null;
+    let chart = null; // Chart.js instance (if available)
     let lastData = [];
 
-    function setStatus(msg) { statusEl.textContent = msg; }
+    function setStatus(msg){ statusEl.textContent = msg; }
 
-    function updateBinsLabel(value, auto) {
-      binLabel.textContent = auto ? 'Auto' : String(value);
-    }
-
-    function calculate(auto = true) {
+    function calculate() {
       const nums = toNums(textarea.value);
       lastData = nums;
-      if (nums.length === 0) {
-        setStatus('Please enter at least one valid number.');
-        statsGrid.innerHTML = '';
-        tableBody.innerHTML = '';
-        destroyChart();
-        downloadBtn.disabled = true;
-        copyBtn.disabled = true;
-        return;
-      }
+      // Clear
+      statsGrid.innerHTML=''; tableBody.innerHTML=''; destroyChart(); clearSvg();
+      downloadBtn.disabled = true; copyBtn.disabled = true;
 
+      if (!nums.length) { setStatus('Please enter at least one valid number.'); return; }
       nums.sort((a,b)=>a-b);
-      const n = nums.length;
-      const sm = sum(nums);
-      const mn = mean(nums);
-      const md = median(nums);
-      const { modes: modeVals, freq } = modes(nums);
-      const minV = nums[0], maxV = nums[nums.length - 1];
-      const rangeV = maxV - minV;
-      const vpop = variancePop(nums);
-      const sd = Math.sqrt(vpop);
-      const q1 = quantile(nums, 0.25), q3 = quantile(nums, 0.75);
-      const iqr = q3 - q1;
+      const n=nums.length, sm=sum(nums), mn=mean(nums), md=median(nums);
+      // modes
+      const freq = new Map(); nums.forEach(v=>freq.set(v,(freq.get(v)||0)+1));
+      const maxF = Math.max(...freq.values());
+      const modeVals = [...freq.entries()].filter(([,c])=>c===maxF).map(([v])=>v);
+      const minV=nums[0], maxV=nums[nums.length-1], rangeV=maxV-minV;
+      const vpop=variancePop(nums), sd=Math.sqrt(vpop);
+      const q1=quantile(nums,0.25), q3=quantile(nums,0.75), iqr=q3-q1;
 
-      // Bins
-      let bins = binsNumber.value ? Number(binsNumber.value) : 0;
-      if (!bins || !Number.isFinite(bins)) bins = autoBins(nums);
+      // bins
+      let bins = binsNumber.value ? Number(binsNumber.value) : autoBins(nums);
       bins = clamp(Math.round(bins), 5, 30);
-      updateBinsLabel(bins, !binsNumber.value);
-
-      // Histogram
-      const hist = makeHistogram(nums, bins);
-      renderChart(hist.labels, hist.counts);
       histMeta.textContent = ` • ${bins} bin${bins===1?'':'s'}`;
 
-      // Stats tiles
-      statsGrid.innerHTML = [
-        { k:'Count', v:n },
-        { k:'Mean', v:formatNum(mn) },
-        { k:'Median', v:formatNum(md) },
-        { k:'Mode(s)', v: modeVals.join(', ') },
-        { k:'Min', v:formatNum(minV) },
-        { k:'Max', v:formatNum(maxV) },
-        { k:'Range', v:formatNum(rangeV) },
-        { k:'Sum', v:formatNum(sm) },
-        { k:'Variance (pop.)', v:formatNum(vpop) },
-        { k:'Std Dev (pop.)', v:formatNum(sd) },
-        { k:'Q1', v:formatNum(q1) },
-        { k:'Q3', v:formatNum(q3) },
-      ].map(o => `<div class="stat"><div class="k">${o.k}</div><div class="v">${o.v}</div></div>`).join('');
+      // histogram
+      const hist = makeHistogram(nums, bins);
+      renderHistogram(hist);
 
-      // Non-visual summary table (accessible alternative)
+      // tiles
+      statsGrid.innerHTML = [
+        { k:'Count', v:n }, { k:'Mean', v:formatNum(mn) }, { k:'Median', v:formatNum(md) },
+        { k:'Mode(s)', v: modeVals.join(', ') }, { k:'Min', v:formatNum(minV) },
+        { k:'Max', v:formatNum(maxV) }, { k:'Range', v:formatNum(rangeV) },
+        { k:'Sum', v:formatNum(sm) }, { k:'Variance (pop.)', v:formatNum(vpop) },
+        { k:'Std Dev (pop.)', v:formatNum(sd) }, { k:'Q1', v:formatNum(q1) }, { k:'Q3', v:formatNum(q3) },
+      ].map(o=>`<div class="stat"><div class="k">${o.k}</div><div class="v">${o.v}</div></div>`).join('');
+
+      // table
       tableBody.innerHTML = `
         <tr><th scope="row">Count</th><td>${n}</td></tr>
         <tr><th scope="row">Mean</th><td>${formatNum(mn)}</td></tr>
         <tr><th scope="row">Median</th><td>${formatNum(md)}</td></tr>
-        <tr><th scope="row">Mode(s)</th><td>${modeVals.join(', ')} (frequency ${freq})</td></tr>
+        <tr><th scope="row">Mode(s)</th><td>${modeVals.join(', ')} (frequency ${maxF})</td></tr>
         <tr><th scope="row">Minimum</th><td>${formatNum(minV)}</td></tr>
         <tr><th scope="row">Maximum</th><td>${formatNum(maxV)}</td></tr>
         <tr><th scope="row">Range</th><td>${formatNum(rangeV)}</td></tr>
@@ -419,141 +246,132 @@
       `;
 
       setStatus(`Calculated statistics for ${n} value${n===1?'':'s'}.`);
-      downloadBtn.disabled = false;
       copyBtn.disabled = false;
     }
 
-    function destroyChart() {
-      if (chart) { chart.destroy(); chart = null; }
-      const ctx = canvas.getContext('2d');
-      ctx && ctx.clearRect(0, 0, canvas.width, canvas.height);
-    }
+    function destroyChart(){ if(chart && window.Chart){ chart.destroy(); chart=null; } }
+    function clearSvg(){ svgFallback.innerHTML=''; svgFallback.hidden = true; svgFallback.setAttribute('aria-hidden','true'); canvas.hidden = false; }
 
-    function renderChart(labels, counts) {
-      destroyChart();
-      const ctx = canvas.getContext('2d');
-      chart = new Chart(ctx, {
-        type: 'bar',
-        data: {
-          labels,
-          datasets: [{
-            label: 'Frequency',
-            data: counts,
-            backgroundColor: 'rgba(37, 99, 235, 0.6)',
-            borderColor: 'rgba(37, 99, 235, 1)',
-            borderWidth: 1.5,
-            borderRadius: 6,
-            hoverBackgroundColor: 'rgba(37, 99, 235, 0.75)',
-          }]
-        },
-        options: {
-          responsive: true,
-          maintainAspectRatio: false,
-          plugins: {
-            legend: { labels: { color: getComputedStyle(document.documentElement).getPropertyValue('--on-surface') } },
-            tooltip: {
-              callbacks: {
-                label: (ctx) => ` ${ctx.dataset.label}: ${ctx.raw}`
-              }
-            }
-          },
-          scales: {
-            x: {
-              ticks: { color: getComputedStyle(document.documentElement).getPropertyValue('--on-surface') },
-              grid: { color: 'rgba(148, 163, 184, 0.25)' }
-            },
-            y: {
-              beginAtZero: true,
-              ticks: { precision: 0, color: getComputedStyle(document.documentElement).getPropertyValue('--on-surface') },
-              grid: { color: 'rgba(148, 163, 184, 0.25)' }
+    function renderHistogram(hist) {
+      // Prefer Chart.js if available and loaded
+      if (window.Chart && canvas.getContext) {
+        const ctx = canvas.getContext('2d');
+        chart = new Chart(ctx, {
+          type: 'bar',
+          data: { labels: hist.labels, datasets: [{ label:'Frequency', data: hist.counts,
+            backgroundColor: 'rgba(37,99,235,.6)', borderColor: 'rgba(37,99,235,1)', borderWidth: 1.5, borderRadius: 6 }] },
+          options: {
+            responsive: true, maintainAspectRatio: false,
+            plugins: { legend: { labels: { color: getComputedStyle(document.documentElement).getPropertyValue('--on-surface') } } },
+            scales: {
+              x: { ticks: { color: getComputedStyle(document.documentElement).getPropertyValue('--on-surface') }, grid: { color:'rgba(148,163,184,.25)' } },
+              y: { beginAtZero:true, ticks: { precision:0, color: getComputedStyle(document.documentElement).getPropertyValue('--on-surface') }, grid:{ color:'rgba(148,163,184,.25)'} }
             }
           }
-        }
-      });
+        });
+        // enable PNG download
+        downloadBtn.disabled = false;
+        downloadBtn.onclick = () => {
+          const link = document.createElement('a');
+          link.download = 'histogram.png';
+          link.href = chart.toBase64Image('image/png', 1);
+          link.click();
+        };
+        return;
+      }
 
-      // Set a fixed height that adapts to viewport
-      canvas.parentElement.style.height = '320px';
+      // Otherwise render an accessible inline SVG fallback (no dependency)
+      canvas.hidden = true;
+      svgFallback.hidden = false;
+      svgFallback.setAttribute('aria-hidden','false');
+      svgFallback.innerHTML = buildSvg(hist.labels, hist.counts);
+      setStatus('Rendered fallback chart (Chart.js not available). PNG download disabled.');
+      downloadBtn.disabled = true;
     }
 
-    // Events
-    calcBtn.addEventListener('click', () => calculate());
-    resetBtn.addEventListener('click', () => {
-      textarea.value = '';
-      binsRange.value = 0;
-      binsNumber.value = '';
-      updateBinsLabel(0, true);
-      statsGrid.innerHTML = '';
-      tableBody.innerHTML = '';
-      setStatus('Cleared.');
-      destroyChart();
-      downloadBtn.disabled = true;
-      copyBtn.disabled = true;
-      textarea.focus();
-    });
+    function buildSvg(labels, data) {
+      const pad = { t: 10, r: 10, b: 36, l: 36 };
+      const w = svgFallback.clientWidth || 800;
+      const h = svgFallback.clientHeight || 360;
+      const iw = w - pad.l - pad.r, ih = h - pad.t - pad.b;
+      const max = Math.max(...data, 1);
+      const barW = iw / data.length;
+      const bars = data.map((v,i)=> {
+        const bh = (v/max) * ih;
+        const x = pad.l + i*barW + 2;
+        const y = pad.t + ih - bh;
+        const bw = Math.max(2, barW - 4);
+        return `<rect x="${x}" y="${y}" width="${bw}" height="${bh}" rx="4" fill="rgba(37,99,235,0.75)"><title>${labels[i]} • ${v}</title></rect>`;
+      }).join('');
 
-    // Sync range <-> number
-    binsRange.addEventListener('input', (e) => {
-      const val = Number(e.target.value);
-      binsNumber.value = val ? val : '';
-      updateBinsLabel(val, !val);
-      if (lastData.length) calculate(false);
-    });
-    binsNumber.addEventListener('input', (e) => {
-      const v = e.target.value;
-      if (v === '') {
-        binsRange.value = 0;
-        updateBinsLabel(0, true);
-      } else {
-        const val = clamp(Number(v), 5, 30);
-        if (!Number.isFinite(val)) return;
-        binsNumber.value = val;
-        binsRange.value = val;
-        updateBinsLabel(val, false);
-      }
-      if (lastData.length) calculate(false);
-    });
+      // y-axis ticks (0..max)
+      const ticks = 4;
+      const gy = Array.from({length:ticks+1},(_,k)=>k*ticks?Math.round(max*k/ticks):0);
+      const grid = gy.map((tv,idx)=>{
+        const y = pad.t + ih - (tv/max)*ih;
+        const opacity = idx===0?0.6:0.25;
+        return `
+          <line x1="${pad.l}" y1="${y}" x2="${w-pad.r}" y2="${y}" stroke="rgba(148,163,184,${opacity})" stroke-width="1"/>
+          <text x="${pad.l-8}" y="${y}" text-anchor="end" dominant-baseline="middle" fill="currentColor" font-size="12">${tv}</text>
+        `;
+      }).join('');
+
+      // x-axis labels (sparse, to avoid overlap)
+      const skip = Math.ceil(labels.length / 6);
+      const xlabels = labels.map((lab,i)=>{
+        if (i % skip !== 0) return '';
+        const x = pad.l + i*barW + barW/2;
+        const y = h - 8;
+        return `<text x="${x}" y="${y}" text-anchor="middle" fill="currentColor" font-size="11" transform="rotate(0, ${x}, ${y})">${lab}</text>`;
+      }).join('');
+
+      return `
+        <svg role="img" aria-label="Histogram (SVG fallback)" width="100%" height="100%" viewBox="0 0 ${w} ${h}" xmlns="http://www.w3.org/2000/svg" style="color:${getComputedStyle(document.documentElement).getPropertyValue('--on-surface')};">
+          <desc>Bar heights show frequency counts per bin. A tabular summary appears below.</desc>
+          <rect x="0" y="0" width="${w}" height="${h}" fill="transparent"/>
+          ${grid}
+          ${bars}
+          <line x1="${pad.l}" y1="${h-pad.b}" x2="${w-pad.r}" y2="${h-pad.b}" stroke="rgba(148,163,184,.6)" stroke-width="1"/>
+          ${xlabels}
+        </svg>
+      `;
+    }
 
     // Copy results
-    copyBtn.addEventListener('click', async () => {
-      const txt = tableBody.innerText.replace(/\n{2,}/g, '\n');
-      try {
-        await navigator.clipboard.writeText(txt);
-        setStatus('Results copied to clipboard.');
-      } catch {
-        setStatus('Copy failed. You can select the table and copy manually.');
-      }
+    copyBtn.addEventListener('click', async ()=>{
+      const txt = tableBody.innerText.replace(/\n{2,}/g,'\n');
+      try { await navigator.clipboard.writeText(txt); setStatus('Results copied to clipboard.'); }
+      catch { setStatus('Copy failed. You can select the table and copy manually.'); }
     });
 
-    // Download chart
-    downloadBtn.addEventListener('click', () => {
-      if (!chart) return;
-      const link = document.createElement('a');
-      link.download = 'histogram.png';
-      link.href = chart.toBase64Image('image/png', 1);
-      link.click();
+    // Reset
+    resetBtn.addEventListener('click', ()=>{
+      textarea.value=''; binsNumber.value='';
+      statsGrid.innerHTML=''; tableBody.innerHTML=''; destroyChart(); clearSvg();
+      setStatus('Cleared.'); downloadBtn.disabled=true; copyBtn.disabled=true; textarea.focus();
     });
 
-    // Theme toggle (respects prefers-color-scheme)
-    const themeToggle = document.getElementById('themeToggle');
-    themeToggle.addEventListener('click', () => {
+    // Calculate
+    calcBtn.addEventListener('click', calculate);
+    textarea.addEventListener('keydown', (e)=>{ if ((e.ctrlKey||e.metaKey) && e.key.toLowerCase()==='enter'){ e.preventDefault(); calculate(); } });
+
+    // Theme toggle (forces dark/light for demonstration; respects system otherwise)
+    themeToggle.addEventListener('click', ()=>{
       const dark = document.documentElement.dataset.theme === 'dark';
       document.documentElement.dataset.theme = dark ? 'light' : 'dark';
       themeToggle.setAttribute('aria-pressed', String(!dark));
-      // Update chart tick/label colors
-      if (chart) calculate(false);
+      // Refresh chart colors on theme change
+      if (lastData.length) calculate();
     });
 
-    // Keyboard niceties
-    textarea.addEventListener('keydown', (e) => {
-      if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'enter') {
-        e.preventDefault(); calculate();
-      }
-    });
-
-    // Example preload for quick demo (optional—comment out for clean start)
+    // Optional: preload example data for quick sanity check
     // textarea.value = "12, 15, 15, 18, 19, 21, 22, 24, 26, 29, 30, 30, 31, 33, 37";
     // calculate();
-
   </script>
 </body>
 </html>
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Quick Stats — Pro</title>
+<style>
