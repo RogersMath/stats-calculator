@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Quick Stats Calculator</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+  body {
+    font-family: sans-serif;
+    max-width: 700px;
+    margin: 0 auto;
+    padding: 1rem;
+    line-height: 1.6;
+    background: #ffffff;
+    color: #000000;
+  }
+  label {
+    font-weight: bold;
+    display: block;
+    margin-bottom: 0.5rem;
+  }
+  textarea, button {
+    width: 100%;
+    font-size: 1rem;
+    padding: 0.75rem;
+    margin-bottom: 1rem;
+  }
+  button {
+    background: #005a9e;
+    color: #ffffff;
+    border: none;
+    cursor: pointer;
+  }
+  button:focus, textarea:focus {
+    outline: 3px solid #ffbf47;
+  }
+  #results {
+    border-top: 2px solid #000;
+    padding-top: 1rem;
+  }
+</style>
+</head>
+<body>
+
+<h1>Quick Statistics Calculator</h1>
+
+<p>Enter numbers separated by commas, spaces, or line breaks.</p>
+
+<label for="numbers">Numbers Input:</label>
+<textarea id="numbers" rows="6" aria-describedby="inputHelp"></textarea>
+<p id="inputHelp">Example: 4, 5, 6, 7 or one value per line.</p>
+
+<button id="calcBtn">Calculate Statistics</button>
+
+<div id="results" aria-live="polite"></div>
+
+<script>
+function calculateStats() {
+  const input = document.getElementById("numbers").value;
+  const resultsDiv = document.getElementById("results");
+
+  if (!input.trim()) {
+    resultsDiv.innerHTML = "<p>Please enter at least one number.</p>";
+    return;
+  }
+
+  // Parse numbers
+  const nums = input
+    .split(/[\s,]+/)
+    .map(n => parseFloat(n))
+    .filter(n => !isNaN(n));
+
+  if (nums.length === 0) {
+    resultsDiv.innerHTML = "<p>No valid numbers found.</p>";
+    return;
+  }
+
+  nums.sort((a, b) => a - b);
+
+  const count = nums.length;
+  const sum = nums.reduce((a, b) => a + b, 0);
+  const mean = sum / count;
+
+  let median;
+  if (count % 2 === 0) {
+    median = (nums[count/2 - 1] + nums[count/2]) / 2;
+  } else {
+    median = nums[(count - 1)/2];
+  }
+
+  // Mode
+  const freq = {};
+  nums.forEach(n => freq[n] = (freq[n] || 0) + 1);
+  const maxFreq = Math.max(...Object.values(freq));
+  const modes = Object.keys(freq).filter(k => freq[k] === maxFreq);
+
+  // Variance & Standard Deviation
+  const variance = nums.reduce((acc, n) => acc + Math.pow(n - mean, 2), 0) / count;
+  const stdDev = Math.sqrt(variance);
+
+  resultsDiv.innerHTML = `
+    <h2>Results</h2>
+    <p><strong>Count:</strong> ${count}</p>
+    <p><strong>Mean:</strong> ${mean.toFixed(4)}</p>
+    <p><strong>Median:</strong> ${median}</p>
+    <p><strong>Mode(s):</strong> ${modes.join(", ")}</p>
+    <p><strong>Minimum:</strong> ${nums[0]}</p>
+    <p><strong>Maximum:</strong> ${nums[nums.length - 1]}</p>
+    <p><strong>Range:</strong> ${nums[nums.length - 1] - nums[0]}</p>
+    <p><strong>Sum:</strong> ${sum}</p>
+    <p><strong>Variance:</strong> ${variance.toFixed(4)}</p>
+    <p><strong>Standard Deviation:</strong> ${stdDev.toFixed(4)}</p>
+  `;
+}
+
+document.getElementById("calcBtn").addEventListener("click", calculateStats);
+</script>
+
+</body>
+</html>
