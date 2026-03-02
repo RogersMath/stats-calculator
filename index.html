@@ -1,81 +1,94 @@
 <!DOCTYPE html>
-<html :root {<html lang="en">
-    --bg: #0b1020; --bg-2: #0e152f;
-    --surface: #ffffff; --on-surface: #0f172a;
-    --muted: #475569; --border: #e2e8f0;
-    --primary: #2563eb; --primary-contrast: #ffffff;
-    --focus: #f59e0b;
-    --radius: 14px;
-    --shadow: 0 10px 30px rgba(15, 23, 42, 0.12);
-  }
-  @media (prefers-color-scheme: dark) {
-    :root { --surface:#0f172a; --on-surface:#e5e7eb; --muted:#9aa4b2; --border:#1f2937; }
-  }
-  * { box-sizing: border-box; }
-  html, body { height: 100%; }
-  body {
-    margin: 0;
-    font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
-    color: var(--on-surface);
-    background: linear-gradient(160deg, var(--bg) 0%, var(--bg-2) 55%, #111827 100%);
-  }
-  .shell { max-width: 1120px; margin: 0 auto; padding: 20px 16px 60px; }
-  header { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 16px; }
-  .brand { display: inline-flex; align-items: center; gap: 10px; color: #fff; text-decoration: none; }
-  .brand .logo { width: 32px; height: 32px; border-radius: 10px; background: radial-gradient(65% 65% at 35% 35%, #60a5fa 0%, #2563eb 55%, #1e40af 100%); box-shadow: inset 0 0 10px rgba(255,255,255,.25), 0 6px 16px rgba(30,64,175,.35); }
-  .brand h1 { margin: 0; font-size: 1.15rem; letter-spacing: .2px; }
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>Quick Stats — Pro</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="color-scheme" content="light dark" />
+  <style>
+    :root{
+      --bg:#0b1020; --bg-2:#0e152f;
+      --surface:#ffffff; --on-surface:#0f172a;
+      --muted:#475569; --border:#e2e8f0;
+      --primary:#2563eb; --primary-contrast:#ffffff;
+      --focus:#f59e0b;
+      --radius:14px;
+      --shadow:0 10px 30px rgba(15,23,42,.12);
+    }
+    @media (prefers-color-scheme: dark){
+      :root{ --surface:#0f172a; --on-surface:#e5e7eb; --muted:#9aa4b2; --border:#1f2937; }
+    }
+    *{ box-sizing:border-box; }
+    html,body{ height:100%; }
+    body{
+      margin:0; font-family:ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial;
+      color:var(--on-surface);
+      background:linear-gradient(160deg,var(--bg) 0%, var(--bg-2) 55%, #111827 100%);
+    }
+    .shell{ max-width:1120px; margin:0 auto; padding:20px 16px 60px; }
+    header{ display:flex; align-items:center; justify-content:space-between; gap:12px; margin-bottom:16px; }
+    .brand{ display:inline-flex; align-items:center; gap:10px; color:#fff; text-decoration:none; }
+    .brand .logo{
+      width:32px;height:32px;border-radius:10px;
+      background:radial-gradient(65% 65% at 35% 35%, #60a5fa 0%, #2563eb 55%, #1e40af 100%);
+      box-shadow:inset 0 0 10px rgba(255,255,255,.25), 0 6px 16px rgba(30,64,175,.35);
+    }
+    .brand h1{ margin:0; font-size:1.15rem; letter-spacing:.2px; }
 
-  .btn {
-    appearance: none; border: 1px solid transparent; padding: 10px 14px; border-radius: 10px;
-    background: var(--primary); color: var(--primary-contrast); font-weight: 600; cursor: pointer;
-    box-shadow: 0 8px 20px rgba(37,99,235,.35);
-  }
-  .btn.secondary { background: transparent; color: #fff; border-color: rgba(255,255,255,.35); box-shadow: none; }
-  .btn:focus-visible { outline: 3px solid var(--focus); outline-offset: 2px; }
-  .btn:disabled { opacity: .6; cursor: not-allowed; }
-  .actions { display: flex; gap: 8px; }
+    .btn{
+      appearance:none; border:1px solid transparent; padding:10px 14px; border-radius:10px;
+      background:var(--primary); color:var(--primary-contrast); font-weight:600; cursor:pointer;
+      box-shadow:0 8px 20px rgba(37,99,235,.35);
+    }
+    .btn.secondary{ background:transparent; color:#fff; border-color:rgba(255,255,255,.35); box-shadow:none; }
+    .btn:focus-visible{ outline:3px solid var(--focus); outline-offset:2px; }
+    .btn:disabled{ opacity:.6; cursor:not-allowed; }
+    .actions{ display:flex; gap:8px; }
 
-  .card { background: var(--surface); border-radius: var(--radius); box-shadow: var(--shadow); overflow: clip; }
-  .grid { display: grid; grid-template-columns: 1fr 1.2fr; }
-  /* MOBILE-FIRST: stack at <= 900px */
-  @media (max-width: 900px) { .grid { grid-template-columns: 1fr; } }
+    .card{ background:var(--surface); border-radius:var(--radius); box-shadow:var(--shadow); overflow:clip; }
+    .grid{ display:grid; grid-template-columns:1fr 1.2fr; }
+    @media (max-width: 900px){ .grid{ grid-template-columns:1fr; } }
 
-  .pane { padding: 18px; border-right: 1px solid var(--border); }
-  @media (max-width: 900px) { .pane { border-right: none; border-bottom: 1px solid var(--border); } }
-  .pane.right { padding: 0; background: rgba(2,6,23,.02); }
+    .pane{ padding:18px; border-right:1px solid var(--border); }
+    @media (max-width:900px){ .pane{ border-right:none; border-bottom:1px solid var(--border); } }
+    .pane.right{ padding:0; background:rgba(2,6,23,.02); }
 
-  label { display: inline-block; font-weight: 700; margin-bottom: 8px; }
-  .help { color: var(--muted); margin: 6px 0 14px; font-size: .95rem; }
-  textarea, input[type="number"] {
-    width: 100%; padding: 12px 14px; border-radius: 10px; border: 1px solid var(--border);
-    background: transparent; color: inherit; font-size: 1rem;
-  }
-  textarea { min-height: 140px; resize: vertical; }
-  textarea:focus, input[type="number"]:focus, input[type="range"]:focus, .btn:focus { outline: 3px solid var(--focus); outline-offset: 2px; }
-  .controls { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 12px; }
-  .pill { display: inline-flex; align-items: center; gap: 8px; font-size: .9rem; padding: 6px 10px; border-radius: 999px; border: 1px solid var(--border); color: var(--muted); }
+    label{ display:inline-block; font-weight:700; margin-bottom:8px; }
+    .help{ color:var(--muted); margin:6px 0 14px; font-size:.95rem; }
+    textarea, input[type="number"]{
+      width:100%; padding:12px 14px; border-radius:10px; border:1px solid var(--border);
+      background:transparent; color:inherit; font-size:1rem;
+    }
+    textarea{ min-height:140px; resize:vertical; }
+    textarea:focus, input[type="number"]:focus, .btn:focus{ outline:3px solid var(--focus); outline-offset:2px; }
 
-  .results { padding: 18px; }
-  .stats { display: grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: 10px; }
-  @media (max-width: 600px) { .stats { grid-template-columns: 1fr; } }
-  .stat { background: rgba(2,6,23,.02); border: 1px solid var(--border); border-radius: 12px; padding: 12px 14px; }
-  .stat .k { color: var(--muted); font-size: .9rem; }
-  .stat .v { font-weight: 700; font-variant-numeric: tabular-nums; }
+    .controls{ display:flex; flex-wrap:wrap; gap:10px; margin-top:12px; }
+    .pill{
+      display:inline-flex; align-items:center; gap:8px; font-size:.9rem; padding:6px 10px;
+      border-radius:999px; border:1px solid var(--border); color:var(--muted);
+    }
 
-  .chart-wrap { padding: 14px 18px; border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); background: rgba(2,6,23,.015); }
-  .chart-head { display: flex; justify-content: space-between; align-items: center; gap: 10px; margin-bottom: 8px; }
-  .chart-actions { display: flex; gap: 8px; align-items: center; }
-  /* Responsive chart height */
-  .chart-area { position: relative; height: 360px; }
-  @media (max-width: 600px) { .chart-area { height: 420px; } }
+    .results{ padding:18px; }
+    .stats{ display:grid; grid-template-columns:repeat(2, minmax(0,1fr)); gap:10px; }
+    @media (max-width:600px){ .stats{ grid-template-columns:1fr; } }
+    .stat{ background:rgba(2,6,23,.02); border:1px solid var(--border); border-radius:12px; padding:12px 14px; }
+    .stat .k{ color:var(--muted); font-size:.9rem; }
+    .stat .v{ font-weight:700; font-variant-numeric:tabular-nums; }
 
-  .table-wrap { padding: 12px 18px 18px; overflow-x: auto; }
-  table { width: 100%; border-collapse: collapse; }
-  th, td { padding: 8px 10px; border-bottom: 1px solid var(--border); font-variant-numeric: tabular-nums; }
-  th { text-align: left; color: var(--muted); font-weight: 600; }
+    .chart-wrap{ padding:14px 18px; border-top:1px solid var(--border); border-bottom:1px solid var(--border); background:rgba(2,6,23,.015); }
+    .chart-head{ display:flex; justify-content:space-between; align-items:center; gap:10px; margin-bottom:8px; }
+    .chart-actions{ display:flex; gap:8px; align-items:center; }
+    .chart-area{ position:relative; height:360px; }
+    @media (max-width:600px){ .chart-area{ height:420px; } }
 
-  footer { color: rgba(255,255,255,.85); font-size: .9rem; margin-top: 16px; }
-</style>
+    .table-wrap{ padding:12px 18px 18px; overflow-x:auto; }
+    table{ width:100%; border-collapse:collapse; }
+    th,td{ padding:8px 10px; border-bottom:1px solid var(--border); font-variant-numeric:tabular-nums; }
+    th{ text-align:left; color:var(--muted); font-weight:600; }
+
+    footer{ color:rgba(255,255,255,.85); font-size:.9rem; margin-top:16px; }
+    code{ background:rgba(148,163,184,.25); padding:.1rem .25rem; border-radius:4px; }
+  </style>
 </head>
 <body>
   <div class="shell">
@@ -94,7 +107,7 @@
       <!-- Left: Input -->
       <section class="pane" aria-labelledby="inputTitle">
         <h2 id="inputTitle" style="margin-top:0">Your Data</h2>
-        <p class="help" id="inputHelp">Paste or type numbers separated by commas, spaces, or new lines. Scientific notation is OK (e.g., 3.2e-3).</p>
+        <p class="help" id="inputHelp">Paste or type numbers separated by commas, spaces, or new lines. Scientific notation is OK (e.g., <code>3.2e-3</code>).</p>
         <label for="numbers">Numbers</label>
         <textarea id="numbers" rows="7" aria-describedby="inputHelp exampleNote"></textarea>
         <p id="exampleNote" class="help">Example: <code>12, 15, 15, 18, 19, 21, 22</code></p>
@@ -126,9 +139,9 @@
           </div>
 
           <div class="chart-area">
-            <!-- Canvas for Chart.js; hidden when we use SVG fallback -->
+            <!-- Canvas for Chart.js; hidden when SVG fallback is used -->
             <canvas id="histCanvas" role="img" aria-label="Histogram of entered values. A table summary is available below."></canvas>
-            <!-- Container for SVG fallback -->
+            <!-- Inline SVG fallback container -->
             <div id="svgFallback" hidden aria-hidden="true"></div>
           </div>
         </div>
@@ -146,16 +159,19 @@
     </div>
 
     <footer id="a11y-notes" aria-live="off">
-      <p><strong>Accessibility notes:</strong> Labels tie to inputs; keyboard focus is visible; results are announced via <code>aria-live</code>; color is not the only means of conveying information; contrast meets or exceeds WCAG 2.1 AA. A non‑visual table provides an equivalent for the chart.</p>
+      <p><strong>Accessibility notes:</strong> Labels connect to inputs; keyboard focus is visible; results are announced via <code>aria-live</code>; color is not the only means of conveying information; contrast meets or exceeds WCAG 2.1 AA. A non‑visual table provides an equivalent for the chart. Page respects <code>prefers-reduced-motion</code> and <code>prefers-color-scheme</code>.</p>
+      <noscript><p style="color:#fff;background:#7c2d12;padding:.5rem .75rem;border-radius:8px;">JavaScript is required to compute statistics and render the histogram. The data summary table will remain as the accessible alternative.</p></noscript>
     </footer>
   </div>
 
-  <!-- Try to load Chart.js (progressive enhancement). If this fails, SVG fallback will render. -->
-  https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js</script>
+  <!-- Progressive enhancement: try Chart.js (if blocked/offline, SVG fallback will render) -->
+  <script defer src="https://cdn.jsdelivr.4.1/dist/chart.umd.min.js</script>
 
-  <script defer>
+  <!-- App logic -->
+  <script>
+  (function(){
     // ---------- Utilities ----------
-    const toNums = (raw) => raw.split(/[\s,;\n\r\t]+/).map(s=>s.trim()).filter(Boolean).map(Number).filter(Number.isFinite);
+    const toNums = (raw) => raw.split(/[\s,;\\n\\r\\t]+/).map(s=>s.trim()).filter(Boolean).map(Number).filter(Number.isFinite);
     const sum = arr => arr.reduce((a,b)=>a+b,0);
     const mean = arr => sum(arr)/arr.length;
     const median = arr => { const n=arr.length; if(!n) return NaN; const s=[...arr].sort((a,b)=>a-b); return n%2?s[(n-1)/2]:(s[n/2-1]+s[n/2])/2; };
@@ -163,12 +179,19 @@
     const variancePop = arr => { const m=mean(arr); return arr.reduce((acc,v)=>acc+(v-m)**2,0)/arr.length; };
     const clamp = (n,lo,hi)=>Math.max(lo,Math.min(hi,n));
     const formatNum = (n) => { if(!Number.isFinite(n)) return ''; const abs=Math.abs(n); if(abs!==0 && (abs<1e-4 || abs>=1e6)) return n.toExponential(2); return Math.round(n*10000)/10000; };
-    const autoBins = (arr)=>{ if(arr.length<2) return 1; const q1=quantile(arr,0.25), q3=quantile(arr,0.75); const iqr=Math.max(1e-12,q3-q1); const bw=2*iqr/Math.cbrt(arr.length); const range=Math.max(1e-12, Math.max(...arr)-Math.min(...arr)); const bins=Math.ceil(range/bw); return clamp(bins,5,30); };
-    function makeHistogram(arr, bins) {
-      const lo=Math.min(...arr), hi=Math.max(...arr); const range=hi-lo||1; const step=range/bins;
-      const edges=Array.from({length:bins+1},(_,i)=>lo+i*step); const counts=new Array(bins).fill(0);
-      for(const v of arr){ let idx=Math.floor((v-lo)/step); if(idx===bins) idx=bins-1; counts[idx]++; }
-      const labels=counts.map((_,i)=>`${formatNum(edges[i])} – ${formatNum(edges[i+1])}`);
+    const autoBins = (arr)=>{ if(arr.length<2) return 5; const q1=quantile(arr,0.25), q3=quantile(arr,0.75); const iqr=Math.max(1e-12,q3-q1); const bw=2*iqr/Math.cbrt(arr.length); const range=Math.max(1e-12, Math.max(...arr)-Math.min(...arr)); const bins=Math.ceil(range/bw); return clamp(bins,5,30); };
+    function makeHistogram(arr, bins){
+      const lo=Math.min(...arr), hi=Math.max(...arr);
+      const range=hi-lo || 1;
+      const step=range/bins;
+      const edges=Array.from({length:bins+1},(_,i)=>lo+i*step);
+      const counts=new Array(bins).fill(0);
+      for(const v of arr){
+        let idx = Math.floor((v-lo)/step);
+        if(idx===bins) idx = bins-1;
+        counts[idx]++;
+      }
+      const labels = counts.map((_,i)=>`${formatNum(edges[i])} – ${formatNum(edges[i+1])}`);
       return { labels, counts, lo, hi, step, edges };
     }
 
@@ -187,19 +210,35 @@
     const binsNumber = document.getElementById('binsNumber');
     const themeToggle = document.getElementById('themeToggle');
 
-    let chart = null; // Chart.js instance (if available)
-    let lastData = [];
+    let chart = null;       // Chart.js instance (when available)
+    let lastData = [];      // Keep last parsed numbers
 
     function setStatus(msg){ statusEl.textContent = msg; }
 
-    function calculate() {
+    function destroyChart(){
+      if(chart && window.Chart){ chart.destroy(); chart = null; }
+    }
+    function clearSvg(){
+      svgFallback.innerHTML = '';
+      svgFallback.hidden = true;
+      svgFallback.setAttribute('aria-hidden','true');
+      canvas.hidden = false;
+    }
+
+    function calculate(){
       const nums = toNums(textarea.value);
       lastData = nums;
-      // Clear
-      statsGrid.innerHTML=''; tableBody.innerHTML=''; destroyChart(); clearSvg();
+
+      // Reset outputs
+      statsGrid.innerHTML=''; tableBody.innerHTML='';
+      destroyChart(); clearSvg();
       downloadBtn.disabled = true; copyBtn.disabled = true;
 
-      if (!nums.length) { setStatus('Please enter at least one valid number.'); return; }
+      if (!nums.length){
+        setStatus('Please enter at least one valid number.');
+        return;
+      }
+
       nums.sort((a,b)=>a-b);
       const n=nums.length, sm=sum(nums), mn=mean(nums), md=median(nums);
       // modes
@@ -225,10 +264,10 @@
         { k:'Mode(s)', v: modeVals.join(', ') }, { k:'Min', v:formatNum(minV) },
         { k:'Max', v:formatNum(maxV) }, { k:'Range', v:formatNum(rangeV) },
         { k:'Sum', v:formatNum(sm) }, { k:'Variance (pop.)', v:formatNum(vpop) },
-        { k:'Std Dev (pop.)', v:formatNum(sd) }, { k:'Q1', v:formatNum(q1) }, { k:'Q3', v:formatNum(q3) },
+        { k:'Std Dev (pop.)', v:formatNum(sd) }, { k:'Q1', v:formatNum(q1) }, { k:'Q3', v:formatNum(q3) }
       ].map(o=>`<div class="stat"><div class="k">${o.k}</div><div class="v">${o.v}</div></div>`).join('');
 
-      // table
+      // table (text alternative)
       tableBody.innerHTML = `
         <tr><th scope="row">Count</th><td>${n}</td></tr>
         <tr><th scope="row">Mean</th><td>${formatNum(mn)}</td></tr>
@@ -249,27 +288,28 @@
       copyBtn.disabled = false;
     }
 
-    function destroyChart(){ if(chart && window.Chart){ chart.destroy(); chart=null; } }
-    function clearSvg(){ svgFallback.innerHTML=''; svgFallback.hidden = true; svgFallback.setAttribute('aria-hidden','true'); canvas.hidden = false; }
-
-    function renderHistogram(hist) {
-      // Prefer Chart.js if available and loaded
-      if (window.Chart && canvas.getContext) {
+    function renderHistogram(hist){
+      // Prefer Chart.js if available
+      if (window.Chart && canvas.getContext){
         const ctx = canvas.getContext('2d');
+        destroyChart();
         chart = new Chart(ctx, {
           type: 'bar',
-          data: { labels: hist.labels, datasets: [{ label:'Frequency', data: hist.counts,
-            backgroundColor: 'rgba(37,99,235,.6)', borderColor: 'rgba(37,99,235,1)', borderWidth: 1.5, borderRadius: 6 }] },
-          options: {
-            responsive: true, maintainAspectRatio: false,
-            plugins: { legend: { labels: { color: getComputedStyle(document.documentElement).getPropertyValue('--on-surface') } } },
-            scales: {
-              x: { ticks: { color: getComputedStyle(document.documentElement).getPropertyValue('--on-surface') }, grid: { color:'rgba(148,163,184,.25)' } },
-              y: { beginAtZero:true, ticks: { precision:0, color: getComputedStyle(document.documentElement).getPropertyValue('--on-surface') }, grid:{ color:'rgba(148,163,184,.25)'} }
+          data: { labels: hist.labels, datasets: [{
+            label:'Frequency', data: hist.counts,
+            backgroundColor:'rgba(37,99,235,.6)', borderColor:'rgba(37,99,235,1)',
+            borderWidth:1.5, borderRadius:6
+          }]},
+          options:{
+            responsive:true, maintainAspectRatio:false,
+            plugins:{ legend:{ labels:{ color:getComputedStyle(document.documentElement).getPropertyValue('--on-surface') } } },
+            scales:{
+              x:{ ticks:{ color:getComputedStyle(document.documentElement).getPropertyValue('--on-surface') }, grid:{ color:'rgba(148,163,184,.25)' } },
+              y:{ beginAtZero:true, ticks:{ precision:0, color:getComputedStyle(document.documentElement).getPropertyValue('--on-surface') }, grid:{ color:'rgba(148,163,184,.25)' } }
             }
           }
         });
-        // enable PNG download
+        // Enable PNG download
         downloadBtn.disabled = false;
         downloadBtn.onclick = () => {
           const link = document.createElement('a');
@@ -280,7 +320,7 @@
         return;
       }
 
-      // Otherwise render an accessible inline SVG fallback (no dependency)
+      // Fallback to accessible SVG (no dependency)
       canvas.hidden = true;
       svgFallback.hidden = false;
       svgFallback.setAttribute('aria-hidden','false');
@@ -289,14 +329,15 @@
       downloadBtn.disabled = true;
     }
 
-    function buildSvg(labels, data) {
+    function buildSvg(labels, data){
       const pad = { t: 10, r: 10, b: 36, l: 36 };
       const w = svgFallback.clientWidth || 800;
       const h = svgFallback.clientHeight || 360;
       const iw = w - pad.l - pad.r, ih = h - pad.t - pad.b;
       const max = Math.max(...data, 1);
       const barW = iw / data.length;
-      const bars = data.map((v,i)=> {
+
+      const bars = data.map((v,i)=>{
         const bh = (v/max) * ih;
         const x = pad.l + i*barW + 2;
         const y = pad.t + ih - bh;
@@ -304,25 +345,25 @@
         return `<rect x="${x}" y="${y}" width="${bw}" height="${bh}" rx="4" fill="rgba(37,99,235,0.75)"><title>${labels[i]} • ${v}</title></rect>`;
       }).join('');
 
-      // y-axis ticks (0..max)
+      // y-axis ticks
       const ticks = 4;
-      const gy = Array.from({length:ticks+1},(_,k)=>k*ticks?Math.round(max*k/ticks):0);
+      const gy = Array.from({length:ticks+1}, (_,k)=>Math.round(max*k/ticks));
       const grid = gy.map((tv,idx)=>{
         const y = pad.t + ih - (tv/max)*ih;
-        const opacity = idx===0?0.6:0.25;
+        const opacity = idx===0 ? 0.6 : 0.25;
         return `
-          <line x1="${pad.l}" y1="${y}" x2="${w-pad.r}" y2="${y}" stroke="rgba(148,163,184,${opacity})" stroke-width="1"/>
+          <line x1="${pad.l}" y1="${y}" x2="${w-pad.r}" y2="${y}" stroke="rgba(148,163,184,${opacity})" stroke-width="1" />
           <text x="${pad.l-8}" y="${y}" text-anchor="end" dominant-baseline="middle" fill="currentColor" font-size="12">${tv}</text>
         `;
       }).join('');
 
-      // x-axis labels (sparse, to avoid overlap)
+      // x-axis labels (sparse)
       const skip = Math.ceil(labels.length / 6);
       const xlabels = labels.map((lab,i)=>{
         if (i % skip !== 0) return '';
         const x = pad.l + i*barW + barW/2;
         const y = h - 8;
-        return `<text x="${x}" y="${y}" text-anchor="middle" fill="currentColor" font-size="11" transform="rotate(0, ${x}, ${y})">${lab}</text>`;
+        return `<text x="${x}" y="${y}" text-anchor="middle" fill="currentColor" font-size="11">${lab}</text>`;
       }).join('');
 
       return `
@@ -339,39 +380,39 @@
 
     // Copy results
     copyBtn.addEventListener('click', async ()=>{
-      const txt = tableBody.innerText.replace(/\n{2,}/g,'\n');
-      try { await navigator.clipboard.writeText(txt); setStatus('Results copied to clipboard.'); }
-      catch { setStatus('Copy failed. You can select the table and copy manually.'); }
+      const txt = tableBody.innerText.replace(/\\n{2,}/g,'\\n');
+      try{ await navigator.clipboard.writeText(txt); setStatus('Results copied to clipboard.'); }
+      catch{ setStatus('Copy failed. You can select the table and copy manually.'); }
     });
 
     // Reset
     resetBtn.addEventListener('click', ()=>{
       textarea.value=''; binsNumber.value='';
-      statsGrid.innerHTML=''; tableBody.innerHTML=''; destroyChart(); clearSvg();
-      setStatus('Cleared.'); downloadBtn.disabled=true; copyBtn.disabled=true; textarea.focus();
+      statsGrid.innerHTML=''; tableBody.innerHTML='';
+      destroyChart(); clearSvg();
+      setStatus('Cleared.');
+      downloadBtn.disabled = true; copyBtn.disabled = true;
+      textarea.focus();
     });
 
     // Calculate
     calcBtn.addEventListener('click', calculate);
-    textarea.addEventListener('keydown', (e)=>{ if ((e.ctrlKey||e.metaKey) && e.key.toLowerCase()==='enter'){ e.preventDefault(); calculate(); } });
+    textarea.addEventListener('keydown', (e)=>{
+      if ((e.ctrlKey||e.metaKey) && e.key.toLowerCase()==='enter'){ e.preventDefault(); calculate(); }
+    });
 
-    // Theme toggle (forces dark/light for demonstration; respects system otherwise)
+    // Theme toggle (demo override of system preference)
     themeToggle.addEventListener('click', ()=>{
       const dark = document.documentElement.dataset.theme === 'dark';
       document.documentElement.dataset.theme = dark ? 'light' : 'dark';
       themeToggle.setAttribute('aria-pressed', String(!dark));
-      // Refresh chart colors on theme change
-      if (lastData.length) calculate();
+      if (lastData.length) calculate(); // refresh colors
     });
 
-    // Optional: preload example data for quick sanity check
+    // Optional quick sanity demo
     // textarea.value = "12, 15, 15, 18, 19, 21, 22, 24, 26, 29, 30, 30, 31, 33, 37";
     // calculate();
+  })();
   </script>
 </body>
 </html>
-<head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Quick Stats — Pro</title>
-<style>
